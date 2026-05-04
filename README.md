@@ -2,7 +2,6 @@
 
 > Turn your daily habits into an epic RPG adventure. Earn XP, level up, maintain streaks, unlock rewards, and compete on global leaderboards.
 
----
 
 ## 🖼️ UI Preview
 
@@ -12,7 +11,6 @@
 - **Rewards Store**: Shop grid with coin display. Purchase animations with confetti.
 - **Profile**: Avatar with level badge overlay. Achievement grid (locked = greyed out).
 
----
 
 ## 📁 Project Structure
 
@@ -68,7 +66,6 @@ levelup/
     └── package.json
 ```
 
----
 
 ## 🚀 Setup Instructions
 
@@ -77,7 +74,6 @@ levelup/
 - MongoDB (local or [MongoDB Atlas](https://www.mongodb.com/atlas))
 - npm or yarn
 
----
 
 ### 1. Clone & Install
 
@@ -91,7 +87,6 @@ cd ../frontend
 npm install
 ```
 
----
 
 ### 2. Configure Backend Environment
 
@@ -113,7 +108,6 @@ FRONTEND_URL=http://localhost:3000
 
 **For MongoDB Atlas** replace `MONGODB_URI` with your Atlas connection string.
 
----
 
 ### 3. Seed Sample Data (Optional but Recommended)
 
@@ -127,7 +121,6 @@ This creates:
 - 5 leaderboard competitor users  
 - Today's daily challenges
 
----
 
 ### 4. Start Backend
 
@@ -151,7 +144,6 @@ npm start
 
 App opens at: `http://localhost:3000`
 
----
 
 ## 🎮 Gamification System
 
@@ -189,7 +181,6 @@ App opens at: `http://localhost:3000`
 | 🏆 Half Century | 50 habits completed |
 | 👑 Centurion | 100 habits completed |
 
----
 
 ## 🌐 API Reference
 
@@ -230,7 +221,6 @@ GET  /api/rewards/store        → store items with ownership
 POST /api/rewards/purchase     → buy item { itemId }
 ```
 
----
 
 ## 🎨 Tech Stack
 
@@ -249,8 +239,6 @@ POST /api/rewards/purchase     → buy item { itemId }
 | Fonts | Orbitron (titles), Rajdhani (UI), Inter (body) |
 | Sound | Web Audio API (no external files) |
 
----
-
 ## 🔧 Customization
 
 ### Add New Habit Categories
@@ -267,7 +255,6 @@ In `backend/routes/rewards.js`, add to `STORE_ITEMS` array.
 ### Change XP Formula
 In `backend/models/User.js`, modify `xpForNextLevel()` method.
 
----
 
 ## 💡 Bonus Features Included
 - ✅ Web Audio API sound effects (XP gain, level up, badge unlock)
@@ -280,7 +267,6 @@ In `backend/models/User.js`, modify `xpForNextLevel()` method.
 - ✅ AI habit suggestions (rule-based)
 - ✅ Dark mode (always on by design)
 
----
 
 ## 📱 Production Deployment
 
@@ -302,6 +288,5 @@ npm run build
 REACT_APP_API_URL=https://your-backend.railway.app/api
 ```
 
----
 
 *Built with ❤️ and neon glow. May your streaks never break.*
