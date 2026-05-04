@@ -17,11 +17,35 @@ const mockMiddleware = require('./middleware/mock');
 const app = express();
 
 // Security middleware
-app.use(helmet());
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true,
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
+
+// Improved CORS configuration
+const corsOrigin = process.env.FRONTEND_URL || 'http://localhost:3000';
+const corsOptions = {
+  origin: function(origin, callback) {
+    // Allow requests with no origin (mobile apps, Postman, curl requests)
+    if (!origin || origin === 'http://localhost:3000' || origin === 'http://localhost:5000' || origin === corsOrigin) {
+      callback(null, true);
+    } else if (process.env.NODE_ENV === 'development') {
+      // Allow all origins in development
+      callback(null, true);
+    } else {
+      // Restrict in production
+      callback(null, corsOrigin === true);
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
+
+if (!process.env.FRONTEND_URL) {
+  console.warn('⚠️ FRONTEND_URL is not set. Using default: http://localhost:3000');
+}
 
 // Rate limiting
 const limiter = rateLimit({
@@ -34,6 +58,16 @@ app.use('/api/', limiter);
 // Body parsing
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Request logging for debugging
+app.use((req, res, next) => {
+  console.log(`📨 ${req.method} ${req.path}${req.query ? '?' + new URLSearchParams(req.query) : ''}`);
+  console.log(`   Origin: ${req.get('origin') || 'none'}`);
+  if (req.get('authorization')) {
+    console.log(`   Auth: ${req.get('authorization').substring(0, 20)}...`);
+  }
+  next();
+});
 
 // Logging in development
 if (process.env.NODE_ENV === 'development') {

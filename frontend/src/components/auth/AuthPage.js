@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
+import GoogleAuthButton from './GoogleAuthButton';
 
 const AVATAR_COLORS = [
   '#7c3aed', '#06b6d4', '#10b981', '#f59e0b',
@@ -21,19 +22,47 @@ export default function AuthPage() {
     e.preventDefault();
     setLoading(true);
     try {
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.email)) {
+        toast.error('Please enter a valid email address');
+        setLoading(false);
+        return;
+      }
+
+      // Validate password length
+      if (form.password.length < 6) {
+        toast.error('Password must be at least 6 characters');
+        setLoading(false);
+        return;
+      }
+
       if (mode === 'login') {
         await login(form.email, form.password);
         toast.success('Welcome back, hero! 🎮');
       } else {
         if (!form.username || form.username.length < 3) {
           toast.error('Username must be at least 3 characters');
+          setLoading(false);
           return;
         }
         await register(form.username, form.email, form.password, selectedColor);
         toast.success('Your adventure begins! 🚀');
       }
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Something went wrong');
+      const errorMessage = err.message || err.response?.data?.error || err.toString() || 'Something went wrong';
+      console.error('Auth error:', err);
+      
+      // More specific error handling
+      if (errorMessage.includes('Network error') || errorMessage.includes('Cannot reach server')) {
+        toast.error('🌐 Network error: Make sure the backend server is running on http://localhost:5000');
+      } else if (errorMessage.includes('timeout')) {
+        toast.error('⏱️ Request timeout: Please check your internet connection and try again');
+      } else if (errorMessage.includes('already exists')) {
+        toast.error('📧 This email or username is already registered');
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -81,7 +110,7 @@ export default function AuthPage() {
           backdropFilter: 'blur(30px)',
           border: '1px solid rgba(124,58,237,0.25)',
           borderRadius: 24,
-          padding: '2.5rem',
+          padding: 'clamp(1.5rem, 5vw, 2.5rem)',
           position: 'relative',
           zIndex: 1,
           boxSizing: 'border-box',
@@ -92,7 +121,7 @@ export default function AuthPage() {
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{
             fontFamily: 'Orbitron, sans-serif', fontWeight: 900,
-            fontSize: '2.25rem', letterSpacing: '0.05em',
+            fontSize: 'clamp(1.5rem, 6vw, 2.25rem)', letterSpacing: '0.05em',
             background: 'linear-gradient(135deg, #7c3aed, #06b6d4)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
           }}>LEVELUP</div>
@@ -131,7 +160,7 @@ export default function AuthPage() {
                   name="username" value={form.username} onChange={handleChange}
                   placeholder="hero_name_123" required={mode === 'register'}
                   className="game-input"
-                  style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 10, fontSize: '0.95rem' }}
+                  style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 10, fontSize: '0.95rem', boxSizing: 'border-box' }}
                 />
               </motion.div>
             )}
@@ -143,7 +172,7 @@ export default function AuthPage() {
               name="email" type="email" value={form.email} onChange={handleChange}
               placeholder="hero@levelup.gg" required
               className="game-input"
-              style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 10, fontSize: '0.95rem' }}
+              style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 10, fontSize: '0.95rem', boxSizing: 'border-box' }}
             />
           </div>
 
@@ -153,7 +182,7 @@ export default function AuthPage() {
               name="password" type="password" value={form.password} onChange={handleChange}
               placeholder="••••••••" required
               className="game-input"
-              style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 10, fontSize: '0.95rem' }}
+              style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 10, fontSize: '0.95rem', boxSizing: 'border-box' }}
             />
           </div>
 
@@ -184,21 +213,22 @@ export default function AuthPage() {
             whileTap={{ scale: 0.97 }}
             className="btn-primary"
             style={{
-              width: '100%', padding: '0.875rem', borderRadius: 12,
-              fontSize: '1rem', marginTop: '0.5rem',
+              width: '100%', padding: 'clamp(0.625rem, 2vw, 0.875rem)', borderRadius: 12,
+              fontSize: 'clamp(0.8rem, 2vw, 1rem)', marginTop: '0.5rem',
               opacity: loading ? 0.7 : 1,
               fontFamily: 'Rajdhani, sans-serif', fontWeight: 700,
               letterSpacing: '0.1em', textTransform: 'uppercase',
+              boxSizing: 'border-box',
             }}
           >
             {loading ? 'Loading...' : mode === 'login' ? '⚔️  Enter the Arena' : '🚀  Start Your Quest'}
           </motion.button>
         </form>
 
-        <p style={{ textAlign: 'center', color: '#475569', fontSize: '0.8rem', marginTop: '1.5rem' }}>
+        <p style={{ textAlign: 'center', color: '#475569', fontSize: 'clamp(0.7rem, 2vw, 0.8rem)', marginTop: '1.5rem' }}>
           {mode === 'login' ? "Don't have an account? " : "Already a hero? "}
           <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
-            style={{ background: 'none', border: 'none', color: '#7c3aed', cursor: 'pointer', fontWeight: 600, fontSize: '0.8rem' }}>
+            style={{ background: 'none', border: 'none', color: '#7c3aed', cursor: 'pointer', fontWeight: 600, fontSize: 'clamp(0.7rem, 2vw, 0.8rem)' }}>
             {mode === 'login' ? 'Sign Up' : 'Sign In'}
           </button>
         </p>

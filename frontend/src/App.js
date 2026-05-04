@@ -26,16 +26,18 @@ const LoadingScreen = () => (
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'column',
-    gap: '1.5rem'
+    gap: '1.5rem',
+    padding: '1rem',
   }}>
     <div style={{
       fontFamily: 'Orbitron, sans-serif',
-      fontSize: '2rem',
+      fontSize: 'clamp(1.5rem, 5vw, 2rem)',
       fontWeight: 900,
       background: 'linear-gradient(135deg, #7c3aed, #06b6d4)',
       WebkitBackgroundClip: 'text',
       WebkitTextFillColor: 'transparent',
       backgroundClip: 'text',
+      textAlign: 'center',
     }}>LEVELUP</div>
     <div style={{ display: 'flex', gap: '8px' }}>
       {[0, 1, 2].map(i => (
